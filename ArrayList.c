@@ -93,6 +93,27 @@ size_t ArrayList_removeIndex(ArrayList aL, const size_t index){
     }
 }
 
+size_t ArrayList_removeObject(ArrayList aL, const void *item, int (*comp)(const void*, const void *)){
+    for(size_t i = 0; i < aL->listSize; ++i){
+        if((*comp)(&item, &aL->list[i]) == 0){
+            return ArrayList_removeIndex(aL, i);
+        }
+    }
+    return 0;
+}
+
+size_t ArrayList_removeObjectAll(ArrayList aL, const void *item, int (*comp)(const void*, const void *)){
+    size_t removed = 0;
+    for(size_t i = 0; i < aL->listSize; ++i){
+        if((*comp)(&item, &aL->list[i]) == 0){
+            ArrayList_removeIndex(aL, i);
+            --i;
+            removed = 1;
+        }
+    }
+    return removed;
+}
+
 size_t ArrayList_size(const ArrayList aL){
     return aL->listSize;
 }
@@ -113,4 +134,13 @@ int ArrayList_bSearch(const ArrayList aL, const void *item, int(*comp)(const voi
     void **temp = bsearch(&item, aL->list, aL->listSize, sizeof(void*), comp);
     if(temp) return temp - aL->list;
     else return -1;
+}
+
+int ArrayList_indexOf(const ArrayList aL, const void *item, int(*comp)(const void*, const void*)){
+    for(size_t i = 0; i< aL->listSize; ++i){
+        if((*comp)(&item, &aL->list[i]) == 0){
+            return i;
+        }
+    }
+    return -1;
 }
