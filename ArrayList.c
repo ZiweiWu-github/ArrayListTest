@@ -14,12 +14,12 @@ ArrayList ArrayList_init(void){
     ArrayList arList = malloc(sizeof * arList);
     if(!arList){
         fprintf(stderr, "The malloc for the ArrayList failed!\n\n");
-        return NULL;
+        exit(1);
     }
     arList->list = malloc(16 * sizeof(void*));
     if(!arList->list){
         fprintf(stderr, "The malloc for the array failed!\n\n");
-        return NULL;
+        exit(1);
     }
     arList->mallocedSize = 16;
     arList->listSize = 0;
