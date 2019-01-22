@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1548123119 source:c:\users\james wu\desktop\c projects\arraylisttest\main.c
+	<stdio.h>
+	<stdlib.h>
+	"ArrayList.h"
+
+1548112803 c:\users\james wu\desktop\c projects\arraylisttest\arraylist.h
+	<stddef.h>
+
+1548123159 source:c:\users\james wu\desktop\c projects\arraylisttest\arraylist.c
+	"ArrayList.h"
+	<stdlib.h>
+	<stdio.h>
+
