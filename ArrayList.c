@@ -10,6 +10,14 @@ struct ArrayList{
     size_t listSize;
 };
 
+static size_t nullCheck(const void* item, const char* itemName, const char* funcName){
+    if(!item){
+        fprintf(stderr, "Null pointer to %s in %s!\n", itemName, funcName);
+        return 1;
+    }
+    return 0;
+}
+
 ArrayList ArrayList_init(void){
     ArrayList arList = malloc(sizeof * arList);
     if(!arList){
@@ -49,12 +57,14 @@ static size_t mallocCheck(ArrayList aL){
 }
 
 size_t ArrayList_add(ArrayList aL, void *e){
+    if(nullCheck(aL, "ArrayList", "ArrayList_add")) exit(1);
     if(!mallocCheck(aL)) return 0;
     aL->list[aL->listSize++] = e;
     return 1;
 }
 
 size_t ArrayList_addIndex(ArrayList aL, void *item, const size_t index){
+    if(nullCheck(aL, "ArrayList", "ArrayList_addIndex")) exit(1);
     if(index > aL->listSize){
         fprintf(stderr, "Array Out of Bounds Exception\nArray size: %d\nTried to add to index: %u\n\n",aL->listSize, index);
         return 0;
@@ -71,6 +81,9 @@ size_t ArrayList_addIndex(ArrayList aL, void *item, const size_t index){
 }
 
 void* ArrayList_get(ArrayList aL, const size_t index){
+    if(nullCheck(aL, "ArrayList", "ArrayList_get")){
+        exit(1);
+    }
     if(index >= aL->listSize){
         fprintf(stderr, "Array Out of Bounds Exception\nArray size: %d\nTried to get index: %u\n\n",aL->listSize, index);
         return NULL;
@@ -78,69 +91,88 @@ void* ArrayList_get(ArrayList aL, const size_t index){
     else return aL->list[index];
 }
 
-size_t ArrayList_removeIndex(ArrayList aL, const size_t index){
+void* ArrayList_removeIndex(ArrayList aL, const size_t index){
+    if(nullCheck(aL, "ArrayList", "ArrayList_removeIndex")){
+        exit(1);
+    }
     if(index >= aL->listSize){
         fprintf(stderr, "Array Out of Bounds Exception\nArray size: %d\nTried to remove index: %u\n\n",aL->listSize, index);
-        return 0;
+        return NULL;
     }
     else{
         --aL->listSize;
-        free(aL->list[index]);
+        void* t = aL->list[index];
         for(size_t i = index; i<aL->listSize; ++i){
             aL->list[i] = aL->list[i+1];
         }
-        return 1;
+        return t;
     }
 }
 
-size_t ArrayList_removeObject(ArrayList aL, const void *item, int (*comp)(const void*, const void *)){
+void* ArrayList_removeObject(ArrayList aL, const void *item, int (*comp)(const void*, const void *)){
+    if(nullCheck(aL, "ArrayList", "ArrayList_removeObject") || nullCheck(item, "item", "ArrayList_removeObject")
+       || nullCheck(comp, "comp", "ArrayList_removeObject")){
+        exit(1);
+    }
     for(size_t i = 0; i < aL->listSize; ++i){
         if((*comp)(&item, &aL->list[i]) == 0){
             return ArrayList_removeIndex(aL, i);
         }
     }
-    return 0;
-}
-
-size_t ArrayList_removeObjectAll(ArrayList aL, const void *item, int (*comp)(const void*, const void *)){
-    size_t removed = 0;
-    for(size_t i = 0; i < aL->listSize; ++i){
-        if((*comp)(&item, &aL->list[i]) == 0){
-            ArrayList_removeIndex(aL, i);
-            --i;
-            removed = 1;
-        }
-    }
-    return removed;
+    return NULL;
 }
 
 size_t ArrayList_size(const ArrayList aL){
+    if(nullCheck(aL, "ArrayList", "ArrayList_size")){
+        exit(1);
+    }
     return aL->listSize;
 }
 
 void ArrayList_sort(ArrayList aL, int(*comp)(const void *, const void*)){
+    if(nullCheck(aL, "ArrayList", "ArrayList_removeObject") || nullCheck(comp, "comp", "ArrayList_removeObject")){
+        exit(1);
+    }
     qsort(aL->list, aL->listSize, sizeof(void *), comp);
 }
 
-void ArrayList_free(ArrayList aL){
+void ArrayList_free(ArrayList aL, void(*custFree)(void*)){
+    if(nullCheck(aL, "ArrayList", "ArrayList_free")){
+        exit(1);
+    }
     for(size_t i = 0; i<aL->listSize; ++i){
-        free(aL->list[i]);
+        if(custFree)(*custFree)(aL->list[i]);
     }
     free(aL->list);
     free(aL);
 }
 
 int ArrayList_bSearch(const ArrayList aL, const void *item, int(*comp)(const void*, const void*)){
+    if(nullCheck(aL, "ArrayList", "ArrayList_bSearch") || nullCheck(item, "item", "ArrayList_bSearch")
+       || nullCheck(comp, "comp", "ArrayList_bSearch")){
+        exit(1);
+    }
     void **temp = bsearch(&item, aL->list, aL->listSize, sizeof(void*), comp);
     if(temp) return temp - aL->list;
     else return -1;
 }
 
 int ArrayList_indexOf(const ArrayList aL, const void *item, int(*comp)(const void*, const void*)){
+    if(nullCheck(aL, "ArrayList", "ArrayList_indexOf") || nullCheck(item, "item", "ArrayList_indexOf")
+       || nullCheck(comp, "comp", "ArrayList_indexOf")){
+        exit(1);
+    }
     for(size_t i = 0; i< aL->listSize; ++i){
         if((*comp)(&item, &aL->list[i]) == 0){
             return i;
         }
     }
     return -1;
+}
+
+size_t ArrayList_isEmpty(ArrayList aL){
+    if(nullCheck(aL, "ArrayList", "ArrayList_free")){
+        exit(1);
+    }
+    return !aL->listSize;
 }
