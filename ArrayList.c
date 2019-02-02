@@ -58,8 +58,17 @@ static size_t mallocCheck(ArrayList aL){
 
 size_t ArrayList_add(ArrayList aL, void *e){
     if(nullCheck(aL, "ArrayList", "ArrayList_add")) exit(1);
-    if(!mallocCheck(aL)) return 0;
+    if(!mallocCheck(aL)) exit(1);
     aL->list[aL->listSize++] = e;
+    return 1;
+}
+
+size_t ArrayList_addArrayList(ArrayList first, ArrayList second){
+    if(nullCheck(first, "ArrayList first", "ArrayList_addArrayList")) exit(1);
+    if(nullCheck(second, "ArrayList second", "ArrayList_addArrayList")) exit(1);
+    for(size_t i = 0; i < second->listSize; ++i){
+        ArrayList_add(first, second->list[i]);
+    }
     return 1;
 }
 
@@ -67,17 +76,27 @@ size_t ArrayList_addIndex(ArrayList aL, void *item, const size_t index){
     if(nullCheck(aL, "ArrayList", "ArrayList_addIndex")) exit(1);
     if(index > aL->listSize){
         fprintf(stderr, "Array Out of Bounds Exception\nArray size: %d\nTried to add to index: %u\n\n",aL->listSize, index);
-        return 0;
+        exit(1);
     }
     else if(index == aL->listSize) return ArrayList_add(aL, item);
     else{
-        if(!mallocCheck(aL)) return 0;
-        for(int i = aL->listSize; i > index; --i){
+        if(!mallocCheck(aL)) exit(1);
+        for(size_t i = aL->listSize; i > index; --i){
             aL->list[i] = aL->list[i-1];
         }
         aL->list[index] = item;
+        ++aL->listSize;
         return 1;
     }
+}
+
+size_t ArrayList_addArrayListIndex(ArrayList first, ArrayList second, size_t index){
+    if(nullCheck(first, "ArrayList first", "ArrayList_addArrayListIndex")) exit(1);
+    if(nullCheck(second, "ArrayList second", "ArrayList_addArrayListIndex")) exit(1);
+    for(size_t i =0; i<second->listSize; ++i){
+        ArrayList_addIndex(first, second->list[i], index + i);
+    }
+    return 1;
 }
 
 void* ArrayList_get(ArrayList aL, const size_t index){

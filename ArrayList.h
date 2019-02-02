@@ -52,12 +52,10 @@ int ArrayList_indexOf(const ArrayList aL, const void *item, int(*comp)(const voi
 <br>If it contains anything, then 0 is returned*/
 size_t ArrayList_isEmpty(ArrayList aL);
 
-/**Todo:
-<br>Adds the void pointers from the second ArrayList into the first*/
+/**Adds the void pointers from the second ArrayList into the first*/
 size_t ArrayList_addArrayList(ArrayList first, ArrayList second);
 
-/**Todo:
-<br>Adds the void pointers from the second ArrayList into the first starting from the selected index*/
+/**Adds the void pointers from the second ArrayList into the first starting from the selected index*/
 size_t ArrayList_addArrayListIndex(ArrayList first, ArrayList second, size_t index);
 
 #endif // ARRAYLIST_H_INCLUDED
