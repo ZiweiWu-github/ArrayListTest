@@ -26,7 +26,7 @@ ArrayList ArrayList_init(void){
     }
     arList->list = malloc(16 * sizeof(void*));
     if(!arList->list){
-        fprintf(stderr, "The malloc for the array failed!\n\n");
+        fprintf(stderr, "The malloc for ArrayList's array failed!\n\n");
         exit(1);
     }
     arList->mallocedSize = 16;
@@ -39,13 +39,13 @@ static size_t mallocCheck(ArrayList aL){
         size_t temp = aL->mallocedSize +16;
         if(temp <= aL->mallocedSize){
             fprintf(stderr, "Cannot make ArrayList any bigger!\n\n");
-            return 0;
+            exit(1);
         }
         else{
             void **tempalloc = realloc(aL->list, temp * sizeof(void*));
             if(!tempalloc){
                 fprintf(stderr, "ArrayList realloc failed!\n\n");
-                return 0;
+                exit(1);
             }
             else{
                 aL->list = tempalloc;
@@ -105,7 +105,7 @@ void* ArrayList_get(ArrayList aL, const size_t index){
     }
     if(index >= aL->listSize){
         fprintf(stderr, "Array Out of Bounds Exception\nArray size: %d\nTried to get index: %u\n\n",aL->listSize, index);
-        return NULL;
+        exit(1);
     }
     else return aL->list[index];
 }
@@ -116,7 +116,7 @@ void* ArrayList_removeIndex(ArrayList aL, const size_t index){
     }
     if(index >= aL->listSize){
         fprintf(stderr, "Array Out of Bounds Exception\nArray size: %d\nTried to remove index: %u\n\n",aL->listSize, index);
-        return NULL;
+        exit(1);
     }
     else{
         --aL->listSize;
@@ -194,4 +194,30 @@ size_t ArrayList_isEmpty(ArrayList aL){
         exit(1);
     }
     return !aL->listSize;
+}
+
+size_t ArrayList_equals(ArrayList first, ArrayList second, int (*comp)(const void*, const void*)){
+    if(nullCheck(first, "ArrayList first", "ArrayList_equals")||nullCheck(second, "ArrayList second", "ArrayList_equals")
+       || nullCheck(comp, "comp func", "ArrayList_equals")) exit(1);
+    if(first->listSize != second->listSize) return 0;
+    for(size_t i = 0; i<first->listSize; ++i){
+        if((*comp)(&first->list[i], &second->list[i]) != 0) return 0;
+    }
+    return 1;
+}
+
+ArrayList ArrayList_clone(ArrayList aL){
+    if(nullCheck(aL, "ArrayList", "ArrayList_clone")) exit(1);
+    ArrayList t = ArrayList_init();
+    for(size_t i = 0; i< aL->listSize; ++i){
+        ArrayList_add(t, aL->list[i]);
+    }
+    return t;
+}
+
+void ArrayList_toArray(ArrayList aL, void *arr[], size_t arrSize){
+    if(nullCheck(aL, "ArrayList", "ArrayList_toArray") || nullCheck(arr, "arr", "ArrayList_toArray")) exit(1);
+    for(size_t i = 0; i<aL->listSize && i < arrSize; ++i){
+        arr[i] = aL->list[i];
+    }
 }

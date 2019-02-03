@@ -19,19 +19,17 @@ void randAndAdd(ArrayList al, int t){
 int main()
 {
     ArrayList a = ArrayList_init();
-    ArrayList b = ArrayList_init();
 
     for(int i = 0; i<20; ++i) randAndAdd(a, i);
+    void *test[20];
 
-    for(int i = 0; i<5; ++i) randAndAdd(b, i+20);
+    ArrayList_toArray(a, test, 21);
 
-    ArrayList_addArrayListIndex(b,a,5);
-
-    printf("Size of b: %u\n", ArrayList_size(b));
-
-    for(int i = 0; i<ArrayList_size(b); ++i){
-        printf("%d\n", *(int*)ArrayList_get(b,i));
+    for(int i = 0; i<20; ++i){
+        printf("%d\n", *(int*)test[i]);
     }
+
+    ArrayList_free(a, free);
 
     return 0;
 }
